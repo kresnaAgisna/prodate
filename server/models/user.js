@@ -2,6 +2,7 @@
 const {
   Model
 } = require('sequelize');
+const bcrypt = require('bcryptjs')
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
@@ -10,15 +11,47 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      User.hasMany(models.Match, {foreignKey: 'followerId'})
+      User.hasMany(models.Match, {foreignKey: 'followingId'})
     }
   }
   User.init({
-    email: DataTypes.STRING,
-    password: DataTypes.STRING
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: {
+        msg: 'Email already registered'
+      },
+      validate: {
+        notNull: {
+          msg: 'Email is required'
+        },
+        notEmpty: {
+          msg: 'Email is required'
+        },
+        isEmail: {
+          msg: 'Invalid email format'
+        }
+      }
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'Password is required'
+        },
+        notEmpty: {
+          msg: 'Password is required'
+        }
+      }
+    }
   }, {
     sequelize,
     modelName: 'User',
   });
+  User.addHook('beforeCreate', (user, options) => {
+    user.password = bcrypt.hashSync(user.password, 8)
+  })
   return User;
 };
