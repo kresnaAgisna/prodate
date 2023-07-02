@@ -12,6 +12,15 @@ const errorHandler = async(error, req, res, next) => {
         case 'InvalidEmailPassowrd':
             status = 400;
             message = error.message
+            break;
+        case 'JsonWebTokenError':
+            status = 401;
+            message = 'Invalid Token';
+            break;
+        case 'InvalidToken':
+            status = 401;
+            message = error.message;
+            break;
     }
 
 
