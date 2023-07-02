@@ -16,7 +16,7 @@ class MatchController {
             const findMatch = await Match.findOne({ where: { followingId, followerId }})
 
             if(findMatch) {
-                throw ({name: 'Followed', message: 'You already followed this user'})
+                throw ({name: 'AlreadyExist', message: 'You already followed this user'})
             }
             
             const followUser = await Match.create({followingId, followerId})

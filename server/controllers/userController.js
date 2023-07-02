@@ -84,7 +84,7 @@ class UserController {
             })
 
             if(findProfile) {
-                throw ({name: 'Followed', message: 'This user already have a profile'})
+                throw ({name: 'AlreadyExist', message: 'This user already have a profile'})
             }
 
             const newProfile = await Profile.create({

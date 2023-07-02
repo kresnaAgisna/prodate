@@ -10,7 +10,7 @@ const errorHandler = async(error, req, res, next) => {
             message = error.errors[0].message;
             break;
         case 'InvalidEmailPassowrd':
-        case 'Followed':
+        case 'AlreadyExist':
             status = 400;
             message = error.message
             break;
