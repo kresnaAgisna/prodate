@@ -1,0 +1,23 @@
+[
+    {
+        "firstName": "Kresna",
+        "lastName": "Agisna",
+        "gender": "Male",
+        "age": 24,
+        "UserId": 1
+    },
+    {
+        "firstName": "Nathan",
+        "lastName": "Gaung",
+        "gender": "Male",
+        "age": 20,
+        "UserId": 2
+    },
+    {
+        "firstName": "Leo",
+        "lastName": "Ringo",
+        "gender": "Male",
+        "age": 39,
+        "UserId": 3
+    }
+]

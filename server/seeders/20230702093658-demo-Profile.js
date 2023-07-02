@@ -3,17 +3,17 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    const matches = require('../data/matches.json')
-    matches.forEach(e => {
+    const profiles = require('../data/profiles.json')
+    profiles.forEach(e => {
       e.createdAt = new Date()
       e.updatedAt = new Date()
     })
-    await queryInterface.bulkInsert('Matches', matches, {})
+    await queryInterface.bulkInsert('Profiles', profiles, {})
   },
 
-
   async down (queryInterface, Sequelize) {
-    await queryInterface.bulkDelete('Matches', null, {});
+    await queryInterface.bulkDelete('Profiles', null, {});
+
     /**
      * Add commands to revert seed here.
      *
