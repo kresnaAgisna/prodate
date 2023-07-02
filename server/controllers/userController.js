@@ -1,6 +1,7 @@
 const { User, Profile, Match } = require('../models')
 const { comparePassword } = require('../helpers/bcrypt')
 const { signToken } = require('../helpers/jwt')
+const { Op } = require('sequelize')
 
 class UserController {
     static async registerUser(req, res, next) {
@@ -35,9 +36,9 @@ class UserController {
     }
 
     static async getUserProfile(req, res, next) {
-        const {id} = req.user
+        const userId = +req.user.id
         try {
-            const user = await User.findByPk(id, {
+            const user = await User.findByPk(userId, {
                 attributes: {
                     exclude: ['createdAt', 'updatedAt']
                 },
@@ -75,7 +76,7 @@ class UserController {
 
     static async createProfile(req, res, next) {
         const { firstName, lastName, gender, age} = req.body
-        const userId = req.user.id
+        const userId = +req.user.id
         try {
             const findProfile = await Profile.findOne({
                 where: {
@@ -96,6 +97,53 @@ class UserController {
             })
             res.status(201).json(newProfile)
         } catch (error) {
+            next(error)
+        }
+    }
+
+    static async availableUserList(req, res, next) {
+        const userId = +req.user.id
+        try {
+            let userGender;
+            const unavailableId = [userId]
+            // Find User following
+            let followed = await User.findByPk(userId, {
+                include: [
+                    {
+                        model: Profile,
+                        attributes: ['gender']
+                    },
+                    {
+                        association: 'following',
+                        attributes: ['id']
+                    }
+                ],
+                attributes: ['id']
+            })
+
+            // Make sure we only show list of Users that arent in the following list
+            followed = JSON.parse(JSON.stringify(followed))
+            userGender = followed.Profile.gender
+
+            followed.following.forEach(e => {
+                unavailableId.push(e.id)
+            })
+
+            // Note that we also need to only show the opposite gender and remember that we just need to send the 'Profile' not the 'User'
+            const users = await Profile.findAll({
+                where: {
+                    UserId: {
+                        [Op.notIn]: unavailableId
+                    },
+                    gender: {
+                        [Op.notIn]: ['userGender']
+                    }
+                }
+            })
+            
+            res.status(200).json(users)
+        } catch (error) {
+            console.log(error)
             next(error)
         }
     }
