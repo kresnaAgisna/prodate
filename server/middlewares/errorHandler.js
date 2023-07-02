@@ -4,7 +4,14 @@ const errorHandler = async(error, req, res, next) => {
     let name = error.name
 
     switch(name) {
-        
+        case 'SequelizeUniqueConstraintError':
+        case 'SequelizeValidationError':
+            status = 400;
+            message = error.errors[0].message;
+            break;
+        case 'InvalidEmailPassowrd':
+            status = 400;
+            message = error.message
     }
 
 
@@ -12,3 +19,8 @@ const errorHandler = async(error, req, res, next) => {
 }
 
 module.exports = errorHandler
+
+// 'SequelizeUniqueConstraintError'
+// 'SequelizeValidationError'
+// 'JsonWebTokenError'
+// 'SequelizeForeignKeyConstraintError'

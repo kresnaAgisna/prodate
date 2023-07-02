@@ -10,16 +10,27 @@ class UserController {
 
             res.status(201).json({id: newUser.id, email })
         } catch (error) {
-            console.log(error)
+            next(error)
         }
     }
 
     static async loginuser(req, res, next) {
         const { email, password } = req.body
         try {
-            
+            if(!email || !password) {
+                throw({name: 'InvalidEmailPassowrd', message: 'Invalid email/password'})
+            }
+            const findUser = await User.findOne({where: { email }})
+
+            if(!findUser || !comparePassword(password, findUser.password)) {
+                throw({name: 'InvalidEmailPassowrd', message: 'Invalid email/password'})
+            }
+
+            const access_token = signToken({id: findUser.id})
+
+            res.status(200).json({access_token})
         } catch (error) {
-            console.log(error)
+            next(error)
         }
     }
 
