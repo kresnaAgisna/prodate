@@ -1,8 +1,21 @@
 const { User, Match } = require('../models')
-
+const { comparePassword } = require('../helpers/bcrypt')
+const { signToken } = require('../helpers/jwt')
 
 class UserController {
     static async registerUser(req, res, next) {
+        const { email, password } = req.body
+        try {
+            const newUser = await User.create({ email, password})
+
+            res.status(201).json({id: newUser.id, email })
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    static async loginuser(req, res, next) {
+        const { email, password } = req.body
         try {
             
         } catch (error) {
