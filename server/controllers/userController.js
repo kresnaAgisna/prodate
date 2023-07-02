@@ -1,4 +1,4 @@
-const { User, Match } = require('../models')
+const { User, Profile, Match } = require('../models')
 const { comparePassword } = require('../helpers/bcrypt')
 const { signToken } = require('../helpers/jwt')
 
@@ -40,10 +40,12 @@ class UserController {
                 attributes: {
                     exclude: ['createdAt', 'updatedAt']
                 },
-                include: [{
+                include: [
+                {
                     association: 'follower',
                     attributes: ['id']
-                }, {
+                }, 
+                {
                     association: 'following',
                     attributes: ['id']
                 }]
@@ -54,9 +56,28 @@ class UserController {
                 //     },
                 // }]
             })
+
             res.status(200).json(users)
         } catch (error) {
             console.log(error)
+        }
+    }
+
+    static async createProfile(req, res, next) {
+        const { firstName, lastName, gender, age} = req.body
+        const userId = req.user.id
+        try {
+            const newProfile = Profile.create({
+                firstName,
+                lastName,
+                gender,
+                age,
+                UserId: userId
+            })
+
+            res.status(201).json(newProfile)
+        } catch (error) {
+            next(error)
         }
     }
 }
