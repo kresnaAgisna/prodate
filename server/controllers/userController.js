@@ -34,13 +34,20 @@ class UserController {
         }
     }
 
-    static async getAllUsers(req, res, next) {
+    static async getUserProfile(req, res, next) {
+        const {id} = req.user
         try {
-            const users = await User.findAll({
+            const user = await User.findByPk(id, {
                 attributes: {
                     exclude: ['createdAt', 'updatedAt']
                 },
                 include: [
+                {
+                    model: Profile,
+                    attributes: {
+                        exclude: ['updatedAt', 'createdAt']
+                    }
+                },
                 {
                     association: 'follower',
                     attributes: ['id']
@@ -57,9 +64,12 @@ class UserController {
                 // }]
             })
 
-            res.status(200).json(users)
+            const response = JSON.parse(JSON.stringify(user)) 
+            delete response.password
+
+            res.status(200).json(response)
         } catch (error) {
-            console.log(error)
+            next(error)
         }
     }
 
@@ -67,14 +77,23 @@ class UserController {
         const { firstName, lastName, gender, age} = req.body
         const userId = req.user.id
         try {
-            const newProfile = Profile.create({
+            const findProfile = await Profile.findOne({
+                where: {
+                    UserId: userId
+                }
+            })
+
+            if(findProfile) {
+                throw ({name: 'Followed', message: 'This user already have a profile'})
+            }
+
+            const newProfile = await Profile.create({
                 firstName,
                 lastName,
                 gender,
                 age,
                 UserId: userId
             })
-
             res.status(201).json(newProfile)
         } catch (error) {
             next(error)
