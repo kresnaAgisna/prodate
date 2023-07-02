@@ -10,8 +10,6 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Match.belongsTo(models.User, {foreignKey: 'followingId'})
-      Match.belongsTo(models.User, {foreignKey: 'followerId'})
     }
   }
   Match.init({

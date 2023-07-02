@@ -17,11 +17,18 @@ class UserController {
                     exclude: ['createdAt', 'updatedAt']
                 },
                 include: [{
-                    model: Match,
-                    attributes: {
-                        exclude: ['createdAt', 'updatedAt']
-                    },
+                    association: 'follower',
+                    attributes: ['id']
+                }, {
+                    association: 'following',
+                    attributes: ['id']
                 }]
+                // include: [{
+                //     model: Match,
+                //     attributes: {
+                //         exclude: ['createdAt', 'updatedAt']
+                //     },
+                // }]
             })
             res.status(200).json(users)
         } catch (error) {
